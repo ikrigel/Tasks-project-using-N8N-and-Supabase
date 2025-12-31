@@ -1,0 +1,915 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        64
+      ],
+      "id": "89e2634d-83d1-42f5-95f0-05a5fc4645d4",
+      "name": "Telegram Trigger",
+      "webhookId": "a967e170-cb7d-4b69-90b8-110bc7949945",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "g4O5NnnmjLwa15TU",
+          "name": "Telegram account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fde7ec7f-515e-4c9d-85a3-7182b758375b",
+              "name": "message_text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "f7a81c7a-bf41-4e11-8248-29c74c7cde06",
+              "name": "chat_id",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        64
+      ],
+      "id": "14c465de-66c5-4da1-9447-b6772a5fc8e8",
+      "name": "Parse Message"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "995aebfa-8017-4072-9d60-557d0f7bff94",
+                    "leftValue": "={{ $json.message_text }}",
+                    "rightValue": "/done",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "done"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "285d32b6-3e68-4088-a7ed-24ad04c9f434",
+                    "leftValue": "={{ $json.message_text}}",
+                    "rightValue": "/add",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "add"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "216669bf-3fef-4d99-9d19-279ac59e8a52",
+                    "leftValue": "={{ $json.message_text }}",
+                    "rightValue": "/list",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "list"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "015d99ec-08eb-40c6-9941-732d317aeb86",
+                    "leftValue": "={{ $json.message_text }}",
+                    "rightValue": "/help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        32
+      ],
+      "id": "44e8e558-e26f-403c-95ae-c1cda398977c",
+      "name": "Detect Command",
+      "alwaysOutputData": false,
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2844096b-06d8-4297-8774-4026c2f62a25",
+              "name": "task_text",
+              "value": "={{ $json.message_text.replace(\"/add\",\"\").trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        -224
+      ],
+      "id": "1b10cd35-a2d7-47d9-a20a-155952ce8b46",
+      "name": "Extract Task Text",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7a177000-e308-469f-8089-bc638ec9de54",
+              "leftValue": "={{ $json.task_text.length>0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        -224
+      ],
+      "id": "b0bfd293-092c-44fa-9a09-ae945c3bb936",
+      "name": "If",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "tableId": "tasks",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "telegram_id",
+              "fieldValue": "={{ $json.message.chat.id }}"
+            },
+            {
+              "fieldId": "task_text",
+              "fieldValue": "={{ $json.task_text }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "open"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -352
+      ],
+      "id": "13712f89-e105-4de7-9cb8-69100dfd189e",
+      "name": "Insert Task",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "OSWy9SvOFvLSpXdF",
+          "name": "Supabase account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.telegram_id }}",
+        "text": "=✅ המשימה נוספה בהצלחה!\n\n📋 {{ $json.task_text }}\n\n🆔 מספר משימה: {{ $json.id }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -352
+      ],
+      "id": "aa416f03-71bc-4d09-9666-550cabbdf770",
+      "name": "Confirm Add",
+      "webhookId": "47b43cf3-7fc4-4bfa-9763-7858e5bdc1aa",
+      "credentials": {
+        "telegramApi": {
+          "id": "g4O5NnnmjLwa15TU",
+          "name": "Polo Tasks Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e089d40f-a299-47db-a259-f41c0c751f96",
+              "name": "task_id",
+              "value": "={{ $json.message_text.replace(\"/done\",\"\").trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        -32
+      ],
+      "id": "c71d1c6a-3d3e-47c6-8d49-4f3aa81b1016",
+      "name": "Extract Task ID",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a3e41d6e-f91b-46d7-8323-aeec7238a035",
+              "leftValue": "={{ !isNaN($json.task_id) && $json.task_id > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        -32
+      ],
+      "id": "638f9670-88bf-4049-b502-3cbb15dc6de2",
+      "name": "Validate Task ID"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "tasks",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "=completed"
+            },
+            {
+              "fieldId": "completed_at",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        -160
+      ],
+      "id": "b63857d5-f41f-469f-9950-f23de78b126b",
+      "name": "Update Task Status",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "OSWy9SvOFvLSpXdF",
+          "name": "Supabase Tasks Project"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ead54a68-423e-48ea-84ac-9dd3e4bc80d4",
+              "leftValue": "={{ $json.isEmpty() }}",
+              "rightValue": "NULL",
+              "operator": {
+                "type": "boolean",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "41b0ed0e-8498-4f75-9712-b8cb104d3e57",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1856,
+        -160
+      ],
+      "id": "b624680c-6c70-416b-8e82-e1955b3b58dc",
+      "name": "Check Update Success"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.telegram_id }}",
+        "text": "❌ משימה לא נמצאה\n\nאולי המשימה כבר בוצעה או שהמספר שגוי.\nהשתמש ב-/list לראות משימות פתוחות.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2112,
+        -16
+      ],
+      "id": "12f8fcad-5b66-4e83-9627-f792f3113341",
+      "name": "Task Not Found",
+      "webhookId": "08fc1175-ea9a-44f4-aa0f-4e12cbf8903b",
+      "credentials": {
+        "telegramApi": {
+          "id": "g4O5NnnmjLwa15TU",
+          "name": "Polo Tasks Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "tasks",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "telegram_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.message.chat.id }}"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "=open"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        672,
+        160
+      ],
+      "id": "9c250c95-4939-427c-9cc5-42b6b599899b",
+      "name": "Get Open Tasks",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "OSWy9SvOFvLSpXdF",
+          "name": "Supabase Tasks Project"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// קבלת הנתונים\nconst items = $input.all();\nconst chat_id = $('Parse Message').item.json.chat_id;\n\n// בדיקה אם אין נתונים או אם הנתונים ריקים\nif (!items || items.length === 0) {\n  return [{\n    json: {\n      chat_id: chat_id,\n      message: \"📝 אין לך משימות פתוחות כרגע!\\n\\nהשתמש ב-/add כדי להוסיף משימה חדשה.\"\n    }\n  }];\n}\n\n// סינון אובייקטים ריקים\nconst tasks = items.filter(item => {\n  return item.json && \n         item.json.id !== undefined && \n         item.json.task_text !== undefined;\n});\n\n// אם אחרי הסינון אין משימות\nif (tasks.length === 0) {\n  return [{\n    json: {\n      chat_id: chat_id,\n      message: \"📝 אין לך משימות פתוחות כרגע!\\n\\nהשתמש ב-/add כדי להוסיף משימה חדשה.\"\n    }\n  }];\n}\n\n// בניית הודעת הרשימה\nlet message = `📋 *המשימות הפתוחות שלך:*\\n\\n`;\n\ntasks.forEach((task, index) => {\n  const taskData = task.json;\n  const date = new Date(taskData.created_at).toLocaleDateString('he-IL');\n  \n  message += `*${index + 1}.* ${taskData.task_text}\\n`;\n  message += `   🆔 משימה #${taskData.id} | 📅 ${date}\\n`;\n  message += `   ✅ לסיום: /done ${taskData.id}\\n\\n`;\n});\n\nmessage += `\\n💡 *סה\"כ ${tasks.length} משימות פתוחות*`;\n\nreturn [{\n  json: {\n    chat_id: chat_id,\n    message: message\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        144
+      ],
+      "id": "c009d490-134a-4b74-a27b-ccb21f63a422",
+      "name": "Format Task List",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        144
+      ],
+      "id": "09a9b565-9786-4b65-9998-caadec16a826",
+      "name": "Send Task List",
+      "webhookId": "b03fe8f3-d89c-441d-b5c5-ff391081cab2",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "g4O5NnnmjLwa15TU",
+          "name": "Polo Tasks Telegram Bot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "❓ *פקודה לא מזוהה*\n\n🤖 *הפקודות הזמינות:*\n\n📝 `/add [תיאור משימה]`\nהוסף משימה חדשה\nדוגמה: /add להכין מצגת לישיבה\n\n✅ `/done [מספר משימה]`\nסמן משימה כבוצעת\nדוגמה: /done 5\n\n📋 `/list`\nהצג את כל המשימות הפתוחות שלך\n",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        432
+      ],
+      "id": "6a910ca1-de22-4e08-83d4-5d3501d4642a",
+      "name": "Send Help",
+      "webhookId": "9ab0c637-0502-409a-9839-899d5806c92b",
+      "credentials": {
+        "telegramApi": {
+          "id": "g4O5NnnmjLwa15TU",
+          "name": "Polo Tasks Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.telegram_id }}",
+        "text": "=✅ המשימה סומנה כבוצעה!\n\n🆔 משימה #{{ $json.id }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2096,
+        -240
+      ],
+      "id": "9ec34e30-319b-4937-b507-50ff12d971ae",
+      "name": "Task Found",
+      "webhookId": "3542d3dc-b5d0-4b5f-af9f-71752e705aa0",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "g4O5NnnmjLwa15TU",
+          "name": "Polo Tasks Telegram Bot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "tasks",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.task_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        -128
+      ],
+      "id": "bfd203bb-543d-479a-8f11-f6f82405159f",
+      "name": "Get a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OSWy9SvOFvLSpXdF",
+          "name": "Supabase Tasks Project"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ebd7a097-1075-4c80-b3ee-747c4df9ff8d",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1408,
+        -32
+      ],
+      "id": "a22586b6-7e00-48fc-bc62-99e58ea028e3",
+      "name": "Check Task Status"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "❓ *עזרה*\n\n🤖 *הפקודות הזמינות:*\n\n📝 `/add [תיאור משימה]`\nהוסף משימה חדשה\nדוגמה: /add להכין מצגת לישיבה\n\n✅ `/done [מספר משימה]`\nסמן משימה כבוצעת\nדוגמה: /done 5\n\n📋 `/list`\nהצג את כל המשימות הפתוחות שלך\n",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        624
+      ],
+      "id": "e65a3d38-863b-4e00-93f9-b7e186d13a4d",
+      "name": "Send Help for Help request",
+      "webhookId": "9ab0c637-0502-409a-9839-899d5806c92b",
+      "credentials": {
+        "telegramApi": {
+          "id": "g4O5NnnmjLwa15TU",
+          "name": "Polo Tasks Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parse Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Message": {
+      "main": [
+        [
+          {
+            "node": "Detect Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detect Command": {
+      "main": [
+        [
+          {
+            "node": "Extract Task ID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Task Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Open Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Help for Help request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Task Text": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Insert Task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Task": {
+      "main": [
+        [
+          {
+            "node": "Confirm Add",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Task ID": {
+      "main": [
+        [
+          {
+            "node": "Validate Task ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Task ID": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Task Status": {
+      "main": [
+        [
+          {
+            "node": "Check Update Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Update Success": {
+      "main": [
+        [
+          {
+            "node": "Task Found",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Task Not Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Open Tasks": {
+      "main": [
+        [
+          {
+            "node": "Format Task List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Task List": {
+      "main": [
+        [
+          {
+            "node": "Send Task List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "Check Task Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Task Status": {
+      "main": [
+        [
+          {
+            "node": "Update Task Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Task Not Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d0bd567a9d2b5be5942125ecb9fe32d7cd91366919fb8a592dffd507543ec51e"
+  }
+}
