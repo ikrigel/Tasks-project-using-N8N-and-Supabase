@@ -236,7 +236,7 @@
       "id": "b0bfd293-092c-44fa-9a09-ae945c3bb936",
       "name": "If",
       "retryOnFail": true,
-      "alwaysOutputData": true,
+      "alwaysOutputData": false,
       "onError": "continueRegularOutput"
     },
     {
