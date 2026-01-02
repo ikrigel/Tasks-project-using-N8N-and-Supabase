@@ -21,7 +21,7 @@
       "credentials": {
         "telegramApi": {
           "id": "g4O5NnnmjLwa15TU",
-          "name": "Telegram account 2"
+          "name": "Polo Tasks Telegram Bot"
         }
       },
       "onError": "continueRegularOutput"
@@ -272,7 +272,7 @@
       "credentials": {
         "supabaseApi": {
           "id": "OSWy9SvOFvLSpXdF",
-          "name": "Supabase account 2"
+          "name": "Supabase Tasks Project"
         }
       },
       "onError": "continueRegularOutput"
